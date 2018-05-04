@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Make an avatar!</title>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.js"> // See: https://threejs.org/ </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
+<script src="https://www.jsdelivr.com/package/npm/three-orbitcontrols">
+// See: https://cdnjs.com/; https://cdnjs.com/libraries/three.js </script>
+
+<script>
+
+ // The "scene" is where stuff in our game will happen:
+var scene = new THREE.Scene();
+var flat = {shading: THREE.FlatShading};
+var light = new THREE.HemisphereLight('white', 'grey', 0.5);
+scene.add( light );
+
+ // The "camera" is what sees the stuff:
+var aspect_ratio = window.innerWidth / window.innerHeight;
+var camera = new THREE.PerspectiveCamera(75, aspect_ratio, 1, 10000);
+camera.position.z = 500;
+scene.add(camera);
+
+ // The "renderer" draws what the camera sees onto the screen:
+var renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+//*********************Start Coding on next line***************//
+
+var body = new THREE.SphereGeometry(100);
+var cover = new THREE.MeshNormalMaterial();
+var avatar = new THREE.Mesh(body, cover);
+scene.add(avatar);
+
+var hand = new THREE.SphereGeometry(50);
+
+var rightHand = new THREE.Mesh(hand, cover);
+rightHand.position.set(-150,0,0);
+scene.add(rightHand);
+
+var leftHand = new THREE.Mesh(hand, cover);
+leftHand.position.set(150,0,0);
+scene.add(leftHand);
+
+// Now, show what the camera sees on the screen:
+ renderer.render(scene, camera);
+</script>
