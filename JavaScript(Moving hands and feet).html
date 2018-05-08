@@ -81,9 +81,14 @@ makeTreeAt(-750,-1000);
 
 var isCartwheeling = false;
 var isFlipping = false;
+
 var clock = new THREE.Clock();
 var isCartwheeling = false;
 var isFlipping = false;
+var isMovingRight = false;
+var isMovingLeft = false;
+var isMovingBackward = false;
+var isMovingForward = false;
 
 function animate(){
   requestAnimationFrame(animate);
@@ -95,16 +100,26 @@ function animate(){
 animate();
 
 function walk(){
+  if (!isWalking()) return
+
   var speed = 10;
   var size = 100;
   var time = clock.getElapsedTime();
   var position= Math.sin(speed*time) * size;
   rightHand.position.z = position;
   leftHand.position.z = -position;
-  rightFoot.position.z = position;
-  leftFoot.position.z = -position;
-  
+  rightFoot.position.z = -position;
+  leftFoot.position.z = position;
 
+
+}
+
+function isWalking(){
+  if (isMovingRight) return true;
+  if (isMovingLeft) return true;
+  if (isMovingForward) return true;
+  if (isMovingBackward) return true;
+  return false;
 }
 function acrobatics(){
 
@@ -120,13 +135,42 @@ if(isFlipping) {
 document.addEventListener('keydown',sendKeyDown);
 function sendKeyDown(event){
   var code = event.code;
-  if (code == "ArrowLeft") avatar.position.x = avatar.position.x - 5;
-  if (code == "ArrowRight") avatar.position.x = avatar.position.x + 5;
-  if (code == "ArrowUp") avatar.position.z = avatar.position.z - 5;
-  if (code == "ArrowDown") avatar.position.z = avatar.position.z + 5;
+
+  if (code == "ArrowLeft"){
+     marker.position.x = marker.position.x - 5;
+     isMovingLeft = true;
+  }
+  if (code == "ArrowRight") {
+    marker.position.x = marker.position.x + 5;
+    isMovingRight = true;
+  }
+
+  if (code == "ArrowUp"){
+    marker.position.z = marker.position.z - 5;
+    isMovingForward = true;
+  }
+
+  if (code == "ArrowDown"){
+    marker.position.z = marker.position.z + 5;
+    isMovingBackward = true;
+  }
 
   if (code == "KeyC") isCartwheeling = !isCartwheeling;
   if (code == "KeyF") isFlipping = !isFlipping;
+
+}
+
+document.addEventListener('keyUp',sendKeyUp);
+function sendKeyDown(event){
+  var code = event.code;
+
+  if (code == "ArrowLeft") isMovingLeft = false;
+
+  if (code == "ArrowRight") isMovingRight = false;
+
+  if (code == "ArrowUp") isMovingForward = false;
+
+  if (code == "ArrowDown") isMovingBackward = false;
 
 }
 renderer.render(scene,camera);
