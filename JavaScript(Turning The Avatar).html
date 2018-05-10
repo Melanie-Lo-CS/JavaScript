@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <body></body>
 <script src="/three.js"></script>
+<script src="/tween.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.js"> // See: https://threejs.org/ </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
 <script src="https://www.jsdelivr.com/package/npm/three-orbitcontrols">
@@ -81,15 +82,35 @@ var isMovingRight = false;
 var isMovingLeft = false;
 var isMovingForward = false
 var isMovingBack = false;
+var direction;
+var lastDirection;
 
 function animate() {
 requestAnimationFrame(animate);
+TWEEN.update();
+turn();
 walk();
 acrobatics();
 renderer.render(scene, camera);
 }
 
 animate();
+
+function turn() {
+if (isMovingRight) direction = Math.PI/2;
+if (isMovingLeft) direction = -Math.PI/2;
+if (isMovingForward) direction = Math.PI;
+if (isMovingBack) direction = 0;
+if (!isWalking()) direction = 0;
+if (direction == lastDirection) return;
+lastDirection = direction;
+
+var tween = new TWEEN.Tween(avatar.rotation);
+tween.to({y: direction}, 500);
+tween.start();
+
+}
+
 function walk() {
  if (!isWalking()) return;
 var speed = 10;
@@ -102,6 +123,7 @@ rightFoot.position.z = -position;
 leftFoot.position.z = position;
 }
 
+
 function isWalking() {
 if (isMovingRight) return true;
 if (isMovingLeft) return true;
@@ -109,6 +131,8 @@ if (isMovingForward) return true;
 if (isMovingBack) return true;
 return false;
 }
+
+
 function acrobatics() {
 if (isCartwheeling) {
 avatar.rotation.z = avatar.rotation.z + 0.05;
@@ -116,6 +140,7 @@ avatar.rotation.z = avatar.rotation.z + 0.05;
 if (isFlipping) {
 avatar.rotation.x = avatar.rotation.x + 0.05;
 }
+
 }
 document.addEventListener('keydown', function(event) {
 var code = event.code;
@@ -141,7 +166,6 @@ if (code == 'KeyF') isFlipping = !isFlipping;
 document.addEventListener('keyup', function(event) {
 var code = event.code;
 if (code == 'ArrowLeft') isMovingLeft = false;
-
 if (code == 'ArrowRight') isMovingRight = false;
 if (code == 'ArrowUp') isMovingForward = false;
 if (code == 'ArrowDown') isMovingBack = false;
